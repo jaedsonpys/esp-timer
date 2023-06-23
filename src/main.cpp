@@ -26,6 +26,13 @@ void setup() {
     ntp.begin();
     // UTC -3 (-10800)
     ntp.setTimeOffset(-10800);
+
+    for(int i = 0; i < 3; i++) {
+        digitalWrite(2, HIGH);
+        delay(200);
+        digitalWrite(2, LOW);
+        delay(200);
+    }
 }
 
 void loop() {
