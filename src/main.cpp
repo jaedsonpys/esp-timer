@@ -8,6 +8,14 @@
 const char* ssid = "JARMESON_JNETCOM";
 const char* password = "wet20110";
 
+const int minTimerHours = 23;
+const int minTimerMinutes = 13;
+const int maxTimerHours = 23;
+const int maxTimerMinutes = 15;
+
+int previousDay = 0;
+int timeInSeconds;
+
 WiFiUDP ntpUDP;
 NTPClient ntp(ntpUDP);
 
@@ -33,6 +41,24 @@ void setup() {
         digitalWrite(2, LOW);
         delay(200);
     }
+
+    // RELAY NO (Normally Open) mode
+    int timeDiff, minutesDiff;
+    
+    if(minTimerHours > maxTimerHours) {
+        int minHourSub = 24 - minTimerHours;
+        timeDiff = maxTimerHours + minHourSub;
+    } else {
+        timeDiff = maxTimerHours - minTimerHours;
+    }
+
+    minutesDiff = maxTimerMinutes - minTimerMinutes;
+
+    if(minutesDiff < 0) {
+        minutesDiff *= -1;
+    }
+
+    timeInSeconds = (timeDiff * 3600) + (minutesDiff * 60);
 }
 
 void loop() {
