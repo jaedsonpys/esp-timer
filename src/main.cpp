@@ -62,5 +62,9 @@ void setup() {
 }
 
 void loop() {
+    ntp.forceUpdate();
+    int hours = ntp.getHours();
+    int minutes = ntp.getMinutes();
 
+    delay(1000);
 }
