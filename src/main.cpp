@@ -66,5 +66,21 @@ void loop() {
     int hours = ntp.getHours();
     int minutes = ntp.getMinutes();
 
+    if(ntp.getDay() != previousDay) {
+        if(hours >= minTimerHours && minutes >= minTimerMinutes) {
+            unsigned long cEpoch = ntp.getEpochTime();
+            unsigned long waitAtEpoch = cEpoch + timeInSeconds;
+            previousDay = ntp.getDay();
+
+            digitalWrite(RPIN, HIGH);
+
+            while(ntp.getEpochTime() < waitAtEpoch) {
+                delay(5000);
+            }
+
+            digitalWrite(RPIN, LOW);
+        }
+    }
+
     delay(1000);
 }
