@@ -9,10 +9,10 @@
 const char* ssid = "JARMESON_JNETCOM";
 const char* password = "wet20110";
 
-int minTimerHours = 23;
-int minTimerMinutes = 13;
-int maxTimerHours = 23;
-int maxTimerMinutes = 15;
+int minTimerHours = 22;
+int minTimerMinutes = 00;
+int maxTimerHours = 06;
+int maxTimerMinutes = 00;
 
 int previousDay = 0;
 int timeInSeconds = 0;
