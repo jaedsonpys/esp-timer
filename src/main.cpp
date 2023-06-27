@@ -20,6 +20,7 @@ int timeInSeconds;
 WiFiUDP ntpUDP;
 WebServer server(80);
 NTPClient ntp(ntpUDP);
+TaskHandle_t TimerTaskHandle;
 
 void configTimer();
 void timer(void * parameters);
@@ -50,6 +51,15 @@ void setup() {
     }
 
     // RELAY NO (Normally Open) mode
+
+    xTaskCreate(
+        timer,
+        "timer",
+        1000,
+        NULL,
+        1,
+        &TimerTaskHandle
+    );
 }
 
 void loop() {
