@@ -145,7 +145,7 @@ void getStatus() {
 }
 
 void timer(void * parameters) {
-    int hours, minutes;
+    int hours, minutes, seconds;
     unsigned long cEpoch, waitAtEpoch;
 
     for(;;) {
@@ -153,10 +153,11 @@ void timer(void * parameters) {
             ntp.forceUpdate();
             hours = ntp.getHours();
             minutes = ntp.getMinutes();
+            seconds = ntp.getSeconds();
 
             if(ntp.getDay() != previousDay) {
                 if(hours >= minTimerHours && minutes >= minTimerMinutes) {
-                    cEpoch = ntp.getEpochTime();
+                    cEpoch = ntp.getEpochTime() - seconds;
                     waitAtEpoch = cEpoch + timeInSeconds;
                     previousDay = ntp.getDay();
 
