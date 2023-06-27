@@ -63,7 +63,7 @@ void setup() {
 }
 
 void loop() {
-
+    server.handleClient();
 }
 
 void configTimer() {
