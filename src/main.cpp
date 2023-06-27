@@ -28,6 +28,7 @@ int getTimerInSeconds();
 void configTimer();
 void getTimer();
 void setStatus();
+void getStatus();
 void timer(void * parameters);
 
 void setup() {
@@ -47,6 +48,7 @@ void setup() {
     server.on("/config", HTTP_POST, configTimer);
     server.on("/config", HTTP_GET, getTimer);
 
+    server.on("/status", HTTP_GET, getStatus);
     server.on("/status", HTTP_PUT, setStatus);
 
     ntp.begin();
@@ -142,6 +144,12 @@ void setStatus() {
     } else {
         server.send(400);
     }
+}
+
+void getStatus() {
+    String status = timerActivate ? "on" : "off";
+    String response = "{\"status\":\"" + status + "\"}";
+    server.send(200, "application/json", response);
 }
 
 void timer(void * parameters) {
