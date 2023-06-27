@@ -75,12 +75,12 @@ void configTimer() {
     String eM = server.arg("em");
 
     if(sH && sM && eH && eM) {
+        int timeDiff, minutesDiff;
+
         minTimerHours = sH.toInt();
         minTimerMinutes = sM.toInt();
         maxTimerHours = eH.toInt();
         maxTimerMinutes = eM.toInt();
-
-        int timeDiff, minutesDiff;
     
         if(minTimerHours > maxTimerHours) {
             int minHourSub = 24 - minTimerHours;
@@ -96,6 +96,8 @@ void configTimer() {
         }
 
         timeInSeconds = (timeDiff * 3600) + (minutesDiff * 60);
+        previousDay = 0;
+
         server.send(201);
     } else {
         server.send(400);
