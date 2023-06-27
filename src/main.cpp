@@ -15,7 +15,7 @@ int maxTimerHours = 23;
 int maxTimerMinutes = 15;
 
 int previousDay = 0;
-int timeInSeconds;
+int timeInSeconds = 0;
 
 WiFiUDP ntpUDP;
 WebServer server(80);
@@ -37,6 +37,8 @@ void setup() {
         delay(200);
     }
 
+    server.on("/config", configTimer);
+
     ntp.begin();
     server.begin();
 
@@ -55,7 +57,7 @@ void setup() {
     xTaskCreate(
         timer,
         "timer",
-        1000,
+        4000,
         NULL,
         1,
         &TimerTaskHandle
