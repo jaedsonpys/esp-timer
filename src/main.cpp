@@ -9,10 +9,10 @@
 const char* ssid = "JARMESON_JNETCOM";
 const char* password = "wet20110";
 
-const int minTimerHours = 23;
-const int minTimerMinutes = 13;
-const int maxTimerHours = 23;
-const int maxTimerMinutes = 15;
+int minTimerHours = 23;
+int minTimerMinutes = 13;
+int maxTimerHours = 23;
+int maxTimerMinutes = 15;
 
 int previousDay = 0;
 int timeInSeconds;
@@ -20,6 +20,8 @@ int timeInSeconds;
 WiFiUDP ntpUDP;
 WebServer server(80);
 NTPClient ntp(ntpUDP);
+
+void configTimer();
 
 void setup() {
     pinMode(RPIN, OUTPUT);
@@ -87,4 +89,22 @@ void loop() {
     }
 
     delay(1000);
+}
+
+void configTimer() {
+    String sH = server.arg("sh");
+    String sM = server.arg("sm");
+    String eH = server.arg("eh");
+    String eM = server.arg("em");
+
+    if(sH && sM && eH && eM) {
+        minTimerHours = sH.toInt();
+        minTimerMinutes = sM.toInt();
+        maxTimerHours = eH.toInt();
+        maxTimerMinutes = eM.toInt();
+    
+        server.send(201);
+    } else {
+        server.send(400);
+    }
 }
