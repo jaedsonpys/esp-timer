@@ -9,6 +9,8 @@
 const char* ssid = "JARMESON_JNETCOM";
 const char* password = "wet20110";
 
+bool timerActivate = true;
+
 int minTimerHours = 22;
 int minTimerMinutes = 00;
 int maxTimerHours = 06;
@@ -25,6 +27,7 @@ TaskHandle_t TimerTaskHandle;
 int getTimerInSeconds();
 void configTimer();
 void getTimer();
+void setStatus();
 void timer(void * parameters);
 
 void setup() {
@@ -43,6 +46,8 @@ void setup() {
 
     server.on("/config", HTTP_POST, configTimer);
     server.on("/config", HTTP_GET, getTimer);
+
+    server.on("/status", HTTP_PUT, setStatus);
 
     ntp.begin();
     server.begin();
@@ -121,6 +126,22 @@ void getTimer() {
     String end = String(maxTimerHours) + ":" + String(maxTimerMinutes);
     String response = "{\"start\":\"" + start + "\",\"end\":\"" + end + "\"}"; 
     server.send(200, "application/json", response);
+}
+
+void setStatus() {
+    String status = server.arg("status");
+
+    if(status) {
+        if(status == "on") {
+            timerActivate = true;
+        } else {
+            timerActivate = false;
+        }
+
+        server.send(200);
+    } else {
+        server.send(400);
+    }
 }
 
 void timer(void * parameters) {
