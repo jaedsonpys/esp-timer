@@ -4,7 +4,7 @@
 #include <WebServer.h>
 #include <NTPClient.h>
 
-#define RPIN 15
+#define RELAY_PIN 15
 
 const char* ssid = "JARMESON_JNETCOM";
 const char* password = "wet20110";
@@ -26,7 +26,7 @@ void configTimer();
 void timer(void * parameters);
 
 void setup() {
-    pinMode(RPIN, OUTPUT);
+    pinMode(RELAY_PIN, OUTPUT);
     pinMode(2, OUTPUT);
 
     WiFi.begin(ssid, password);
@@ -63,27 +63,7 @@ void setup() {
 }
 
 void loop() {
-    ntp.forceUpdate();
-    int hours = ntp.getHours();
-    int minutes = ntp.getMinutes();
 
-    if(ntp.getDay() != previousDay) {
-        if(hours >= minTimerHours && minutes >= minTimerMinutes) {
-            unsigned long cEpoch = ntp.getEpochTime();
-            unsigned long waitAtEpoch = cEpoch + timeInSeconds;
-            previousDay = ntp.getDay();
-
-            digitalWrite(RPIN, HIGH);
-
-            while(ntp.getEpochTime() < waitAtEpoch) {
-                delay(5000);
-            }
-
-            digitalWrite(RPIN, LOW);
-        }
-    }
-
-    delay(1000);
 }
 
 void configTimer() {
@@ -135,13 +115,13 @@ void timer(void * parameters) {
                 waitAtEpoch = cEpoch + timeInSeconds;
                 previousDay = ntp.getDay();
 
-                digitalWrite(RPIN, HIGH);
+                digitalWrite(RELAY_PIN, HIGH);
 
                 while(ntp.getEpochTime() < waitAtEpoch) {
                     delay(5000);
                 }
 
-                digitalWrite(RPIN, LOW);
+                digitalWrite(RELAY_PIN, LOW);
             }
         }
 
