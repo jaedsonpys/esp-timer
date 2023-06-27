@@ -49,7 +49,7 @@ void setup() {
     server.on("/config", HTTP_GET, getTimer);
 
     server.on("/status", HTTP_GET, getStatus);
-    server.on("/status", HTTP_PUT, setStatus);
+    server.on("/status", HTTP_POST, setStatus);
 
     ntp.begin();
     server.begin();
