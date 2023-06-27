@@ -22,6 +22,7 @@ WebServer server(80);
 NTPClient ntp(ntpUDP);
 TaskHandle_t TimerTaskHandle;
 
+int getTimerInSeconds();
 void configTimer();
 void timer(void * parameters);
 
@@ -68,6 +69,25 @@ void loop() {
     server.handleClient();
 }
 
+int getTimerInSeconds() {
+    int timeDiff, minutesDiff;
+
+    if(minTimerHours > maxTimerHours) {
+        int minHourSub = 24 - minTimerHours;
+        timeDiff = maxTimerHours + minHourSub;
+    } else {
+        timeDiff = maxTimerHours - minTimerHours;
+    }
+
+    minutesDiff = maxTimerMinutes - minTimerMinutes;
+
+    if(minutesDiff < 0) {
+        minutesDiff *= -1;
+    }
+
+    return (timeDiff * 3600) + (minutesDiff * 60);
+}
+
 void configTimer() {
     String sH = server.arg("sh");
     String sM = server.arg("sm");
@@ -75,27 +95,12 @@ void configTimer() {
     String eM = server.arg("em");
 
     if(sH && sM && eH && eM) {
-        int timeDiff, minutesDiff;
-
         minTimerHours = sH.toInt();
         minTimerMinutes = sM.toInt();
         maxTimerHours = eH.toInt();
         maxTimerMinutes = eM.toInt();
     
-        if(minTimerHours > maxTimerHours) {
-            int minHourSub = 24 - minTimerHours;
-            timeDiff = maxTimerHours + minHourSub;
-        } else {
-            timeDiff = maxTimerHours - minTimerHours;
-        }
-
-        minutesDiff = maxTimerMinutes - minTimerMinutes;
-
-        if(minutesDiff < 0) {
-            minutesDiff *= -1;
-        }
-
-        timeInSeconds = (timeDiff * 3600) + (minutesDiff * 60);
+        timeInSeconds = getTimerInSeconds();
         previousDay = 0;
 
         server.send(201);
