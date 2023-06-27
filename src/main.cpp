@@ -39,6 +39,8 @@ void setup() {
         delay(200);
     }
 
+    server.enableCORS();
+
     server.on("/config", HTTP_POST, configTimer);
     server.on("/config", HTTP_GET, getTimer);
 
