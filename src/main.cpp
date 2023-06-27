@@ -63,6 +63,9 @@ void setup() {
         1,
         &TimerTaskHandle
     );
+
+    // prepare default timer
+    timeInSeconds = getTimerInSeconds();
 }
 
 void loop() {
