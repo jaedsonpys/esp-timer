@@ -22,6 +22,7 @@ WebServer server(80);
 NTPClient ntp(ntpUDP);
 
 void configTimer();
+void timer(void * parameters);
 
 void setup() {
     pinMode(RPIN, OUTPUT);
@@ -106,5 +107,34 @@ void configTimer() {
         server.send(201);
     } else {
         server.send(400);
+    }
+}
+
+void timer(void * parameters) {
+    int hours, minutes;
+    unsigned long cEpoch, waitAtEpoch;
+
+    for(;;) {
+        ntp.forceUpdate();
+        hours = ntp.getHours();
+        minutes = ntp.getMinutes();
+
+        if(ntp.getDay() != previousDay) {
+            if(hours >= minTimerHours && minutes >= minTimerMinutes) {
+                cEpoch = ntp.getEpochTime();
+                waitAtEpoch = cEpoch + timeInSeconds;
+                previousDay = ntp.getDay();
+
+                digitalWrite(RPIN, HIGH);
+
+                while(ntp.getEpochTime() < waitAtEpoch) {
+                    delay(5000);
+                }
+
+                digitalWrite(RPIN, LOW);
+            }
+        }
+
+        delay(1000);
     }
 }
