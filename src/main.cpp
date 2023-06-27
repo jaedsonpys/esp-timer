@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <WiFi.h>
 #include <WiFiUdp.h>
+#include <WebServer.h>
 #include <NTPClient.h>
 
 #define RPIN 15
@@ -17,6 +18,7 @@ int previousDay = 0;
 int timeInSeconds;
 
 WiFiUDP ntpUDP;
+WebServer server(80);
 NTPClient ntp(ntpUDP);
 
 void setup() {
@@ -32,7 +34,9 @@ void setup() {
     }
 
     ntp.begin();
-    // UTC -3 (-10800)
+    server.begin();
+
+    // UTC -3 (-10800): Brasília
     ntp.setTimeOffset(-10800);
 
     for(int i = 0; i < 3; i++) {
