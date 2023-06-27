@@ -49,22 +49,6 @@ void setup() {
     }
 
     // RELAY NO (Normally Open) mode
-    int timeDiff, minutesDiff;
-    
-    if(minTimerHours > maxTimerHours) {
-        int minHourSub = 24 - minTimerHours;
-        timeDiff = maxTimerHours + minHourSub;
-    } else {
-        timeDiff = maxTimerHours - minTimerHours;
-    }
-
-    minutesDiff = maxTimerMinutes - minTimerMinutes;
-
-    if(minutesDiff < 0) {
-        minutesDiff *= -1;
-    }
-
-    timeInSeconds = (timeDiff * 3600) + (minutesDiff * 60);
 }
 
 void loop() {
@@ -102,7 +86,23 @@ void configTimer() {
         minTimerMinutes = sM.toInt();
         maxTimerHours = eH.toInt();
         maxTimerMinutes = eM.toInt();
+
+        int timeDiff, minutesDiff;
     
+        if(minTimerHours > maxTimerHours) {
+            int minHourSub = 24 - minTimerHours;
+            timeDiff = maxTimerHours + minHourSub;
+        } else {
+            timeDiff = maxTimerHours - minTimerHours;
+        }
+
+        minutesDiff = maxTimerMinutes - minTimerMinutes;
+
+        if(minutesDiff < 0) {
+            minutesDiff *= -1;
+        }
+
+        timeInSeconds = (timeDiff * 3600) + (minutesDiff * 60);
         server.send(201);
     } else {
         server.send(400);
