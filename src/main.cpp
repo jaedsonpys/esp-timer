@@ -10,6 +10,8 @@ const char* ssid = "JARMESON_JNETCOM";
 const char* password = "wet20110";
 
 bool timerActivate = true;
+bool timerIsRunning = true;
+bool stopTimer = false;
 
 int minTimerHours = 22;
 int minTimerMinutes = 00;
@@ -25,10 +27,13 @@ NTPClient ntp(ntpUDP);
 TaskHandle_t TimerTaskHandle;
 
 int getTimerInSeconds();
+
 void configTimer();
 void getTimer();
 void setStatus();
 void getStatus();
+void controlRelay();
+
 void timer(void * parameters);
 
 void setup() {
@@ -50,6 +55,7 @@ void setup() {
 
     server.on("/status", HTTP_GET, getStatus);
     server.on("/status", HTTP_POST, setStatus);
+    server.on("/device", HTTP_POST, controlRelay);
 
     ntp.begin();
     server.begin();
@@ -142,6 +148,26 @@ void getStatus() {
     String status = timerActivate ? "on" : "off";
     String response = "{\"status\":\"" + status + "\"}";
     server.send(200, "application/json", response);
+}
+
+void controlRelay() {
+    String status = server.arg("status");
+
+    if(status == "on"){
+        digitalWrite(RELAY_PIN, HIGH);
+    } else if(status == "off") {
+        digitalWrite(RELAY_PIN, LOW);
+    }
+
+    if(status == "on" || status == "off") {
+        if(timerIsRunning) {
+            stopTimer = true;
+        }
+
+        server.send(200);
+    } else {
+        server.send(400);
+    }
 }
 
 void timer(void * parameters) {
