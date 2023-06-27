@@ -24,6 +24,7 @@ TaskHandle_t TimerTaskHandle;
 
 int getTimerInSeconds();
 void configTimer();
+void getTimer();
 void timer(void * parameters);
 
 void setup() {
@@ -38,7 +39,8 @@ void setup() {
         delay(200);
     }
 
-    server.on("/config", configTimer);
+    server.on("/config", HTTP_POST, configTimer);
+    server.on("/config", HTTP_GET, getTimer);
 
     ntp.begin();
     server.begin();
@@ -110,6 +112,13 @@ void configTimer() {
     } else {
         server.send(400);
     }
+}
+
+void getTimer() {
+    String start = String(minTimerHours) + ":" + String(minTimerMinutes);
+    String end = String(maxTimerHours) + ":" + String(maxTimerMinutes);
+    String response = "{\"start\":\"" + start + "\",\"end\":\"" + end + "\"}"; 
+    server.send(200, "application/json", response);
 }
 
 void timer(void * parameters) {
