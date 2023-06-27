@@ -149,26 +149,28 @@ void timer(void * parameters) {
     unsigned long cEpoch, waitAtEpoch;
 
     for(;;) {
-        ntp.forceUpdate();
-        hours = ntp.getHours();
-        minutes = ntp.getMinutes();
+        if(timerActivate) {
+            ntp.forceUpdate();
+            hours = ntp.getHours();
+            minutes = ntp.getMinutes();
 
-        if(ntp.getDay() != previousDay) {
-            if(hours >= minTimerHours && minutes >= minTimerMinutes) {
-                cEpoch = ntp.getEpochTime();
-                waitAtEpoch = cEpoch + timeInSeconds;
-                previousDay = ntp.getDay();
+            if(ntp.getDay() != previousDay) {
+                if(hours >= minTimerHours && minutes >= minTimerMinutes) {
+                    cEpoch = ntp.getEpochTime();
+                    waitAtEpoch = cEpoch + timeInSeconds;
+                    previousDay = ntp.getDay();
 
-                digitalWrite(RELAY_PIN, HIGH);
+                    digitalWrite(RELAY_PIN, HIGH);
 
-                while(ntp.getEpochTime() < waitAtEpoch) {
-                    delay(5000);
+                    while(ntp.getEpochTime() < waitAtEpoch) {
+                        delay(5000);
+                    }
+
+                    digitalWrite(RELAY_PIN, LOW);
                 }
-
-                digitalWrite(RELAY_PIN, LOW);
             }
-        }
 
-        delay(1000);
+            delay(1000);
+        }
     }
 }
