@@ -38,6 +38,7 @@ void getTimer();
 void setStatus();
 void getStatus();
 void controlRelay();
+void getRelayStatus();
 
 void timer(void * parameters);
 
@@ -64,6 +65,7 @@ void setup() {
     server.on("/status", HTTP_POST, setStatus);
     server.on("/status", HTTP_OPTIONS, sendCORSHeader);
 
+    server.on("/device", HTTP_GET, getRelayStatus);
     server.on("/device", HTTP_POST, controlRelay);
     server.on("/device", HTTP_OPTIONS, sendCORSHeader);
 
@@ -191,6 +193,13 @@ void controlRelay() {
     } else {
         server.send(400);
     }
+}
+
+void getRelayStatus() {
+    server.sendHeader(F("Access-Control-Allow-Origin"), F("*"));
+    String status = digitalRead(RELAY_PIN) ? "on" : "off";
+    String response = "{\"status\":\"" + status + "\"}";
+    server.send(200, "application/json", response);
 }
 
 void timer(void * parameters) {
