@@ -33,6 +33,7 @@ TaskHandle_t TimerTaskHandle;
 int getTimerInSeconds();
 
 void configTimer();
+void sendCORSHeader();
 void getTimer();
 void setStatus();
 void getStatus();
@@ -44,6 +45,7 @@ void setup() {
     pinMode(RELAY_PIN, OUTPUT);
     pinMode(2, OUTPUT);
 
+    WiFi.mode(WIFI_STA);
     WiFi.begin(ssid, password);
     WiFi.config(ip, gateway, subnet);
 
@@ -54,14 +56,16 @@ void setup() {
         delay(200);
     }
 
-    server.enableCORS();
-
     server.on("/config", HTTP_POST, configTimer);
     server.on("/config", HTTP_GET, getTimer);
+    server.on("/config", HTTP_OPTIONS, sendCORSHeader);
 
     server.on("/status", HTTP_GET, getStatus);
     server.on("/status", HTTP_POST, setStatus);
+    server.on("/status", HTTP_OPTIONS, sendCORSHeader);
+
     server.on("/device", HTTP_POST, controlRelay);
+    server.on("/device", HTTP_OPTIONS, sendCORSHeader);
 
     ntp.begin();
     server.begin();
@@ -107,6 +111,7 @@ int getTimerInSeconds() {
 }
 
 void configTimer() {
+    server.sendHeader(F("Access-Control-Allow-Origin"), F("*"));
     String sH = server.arg("sh");
     String sM = server.arg("sm");
     String eH = server.arg("eh");
@@ -127,7 +132,16 @@ void configTimer() {
     }
 }
 
+void sendCORSHeader() {
+    server.sendHeader(F("Access-Control-Allow-Origin"), F("*"));
+    server.sendHeader(F("Access-Control-Max-Age"), F("600"));
+    server.sendHeader(F("Access-Control-Allow-Methods"), F("PUT,POST,GET,OPTIONS"));
+    server.sendHeader(F("Access-Control-Allow-Headers"), F("*"));
+    server.send(204);
+}
+
 void getTimer() {
+    server.sendHeader(F("Access-Control-Allow-Origin"), F("*"));
     String start = String(minTimerHours) + ":" + String(minTimerMinutes);
     String end = String(maxTimerHours) + ":" + String(maxTimerMinutes);
     String response = "{\"start\":\"" + start + "\",\"end\":\"" + end + "\"}"; 
@@ -135,6 +149,7 @@ void getTimer() {
 }
 
 void setStatus() {
+    server.sendHeader(F("Access-Control-Allow-Origin"), F("*"));
     String status = server.arg("status");
 
     if(status) {
@@ -151,12 +166,14 @@ void setStatus() {
 }
 
 void getStatus() {
+    server.sendHeader(F("Access-Control-Allow-Origin"), F("*"));
     String status = timerActivate ? "on" : "off";
     String response = "{\"status\":\"" + status + "\"}";
     server.send(200, "application/json", response);
 }
 
 void controlRelay() {
+    server.sendHeader(F("Access-Control-Allow-Origin"), F("*"));
     String status = server.arg("status");
 
     if(status == "on"){
