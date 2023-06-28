@@ -21,6 +21,10 @@ int maxTimerMinutes = 00;
 int previousDay = 0;
 int timeInSeconds = 0;
 
+IPAddress ip(192, 168, 0, 150);
+IPAddress gateway(192, 168, 0, 1);
+IPAddress subnet(255, 255, 255, 0);
+
 WiFiUDP ntpUDP;
 WebServer server(80);
 NTPClient ntp(ntpUDP);
@@ -41,6 +45,8 @@ void setup() {
     pinMode(2, OUTPUT);
 
     WiFi.begin(ssid, password);
+    WiFi.config(ip, gateway, subnet);
+
     while(WiFi.status() != WL_CONNECTED) {
         digitalWrite(2, HIGH);
         delay(200);
