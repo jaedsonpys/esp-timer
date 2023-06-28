@@ -183,17 +183,29 @@ void timer(void * parameters) {
 
             if(ntp.getDay() != previousDay) {
                 if(hours >= minTimerHours && minutes >= minTimerMinutes) {
+                    timerIsRunning = true;
+
                     cEpoch = ntp.getEpochTime() - seconds;
                     waitAtEpoch = cEpoch + timeInSeconds;
                     previousDay = ntp.getDay();
 
                     digitalWrite(RELAY_PIN, HIGH);
 
-                    while(ntp.getEpochTime() < waitAtEpoch) {
-                        delay(5000);
+                    while(true) {
+                        if(ntp.getEpochTime() >= waitAtEpoch) {
+                            digitalWrite(RELAY_PIN, LOW);
+                            break;
+                        }
+
+                        if(stopTimer) {
+                            stopTimer = false;
+                            break;
+                        }
+
+                        delay(1000);
                     }
 
-                    digitalWrite(RELAY_PIN, LOW);
+                    timerIsRunning = false;
                 }
             }
 
