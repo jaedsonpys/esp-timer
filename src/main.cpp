@@ -24,6 +24,8 @@ int timeInSeconds = 0;
 IPAddress ip(192, 168, 0, 150);
 IPAddress gateway(192, 168, 0, 1);
 IPAddress subnet(255, 255, 255, 0);
+IPAddress dns1(8, 8, 8, 8);
+IPAddress dns2(8, 8, 4, 4);
 
 WiFiUDP ntpUDP;
 WebServer server(80);
@@ -48,7 +50,7 @@ void setup() {
 
     WiFi.mode(WIFI_STA);
     WiFi.begin(ssid, password);
-    WiFi.config(ip, gateway, subnet);
+    WiFi.config(ip, gateway, subnet, dns1, dns2);
 
     while(WiFi.status() != WL_CONNECTED) {
         digitalWrite(2, HIGH);
