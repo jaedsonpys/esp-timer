@@ -22,7 +22,7 @@ TaskHandle_t TimerTaskHandle;
 
 Device device01("LampadaSala", 15);
 
-void configTimer();
+void setTimer();
 void sendCORSHeader();
 void getTimer();
 void setTimerStatus();
@@ -44,9 +44,9 @@ void setup() {
         delay(200);
     }
 
-    server.on("/config", HTTP_POST, configTimer);
-    server.on("/config", HTTP_GET, getTimer);
-    server.on("/config", HTTP_OPTIONS, sendCORSHeader);
+    server.on("/timer", HTTP_POST, setTimer);
+    server.on("/timer", HTTP_GET, getTimer);
+    server.on("/timer", HTTP_OPTIONS, sendCORSHeader);
 
     server.on("/status", HTTP_GET, getTimerStatus);
     server.on("/status", HTTP_POST, setTimerStatus);
@@ -67,7 +67,7 @@ void loop() {
     server.handleClient();
 }
 
-void configTimer() {
+void setTimer() {
     server.sendHeader(F("Access-Control-Allow-Origin"), F("*"));
 
     String sH = server.arg("sh");
