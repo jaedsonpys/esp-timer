@@ -46,7 +46,40 @@ void Device::setTimer(int startHour, int startMinute, int endHour, int endMinute
     );
 }
 
-void startTimerTask(void *parameter) {
+void Device::startTimerTask(void *parameter) {
     Device *deviceObject = (Device *)parameter;
     deviceObject->timerTask();
+}
+
+void Device::timerTask() {
+    int hours, minutes, seconds;
+    unsigned long cEpoch, waitAtEpoch;
+
+    for(;;) {
+        ntp.forceUpdate();
+        hours = ntp.getHours();
+        minutes = ntp.getMinutes();
+        seconds = ntp.getSeconds();
+
+        if(ntp.getDay() != this->lastDayTimer) {
+            if(hours >= this->timerStartHour && minutes >= this->timerStartMinute) {
+                this->timerIsRunning = true;
+
+                cEpoch = ntp.getEpochTime() - seconds;
+                waitAtEpoch = cEpoch + this->secondsOnAfterStart;
+                this->lastDayTimer = ntp.getDay();
+
+                digitalWrite(this->devicePin, HIGH);
+
+                while(ntp.getEpochTime() < waitAtEpoch) {
+                    delay(1000);
+                }
+
+                digitalWrite(this->devicePin, LOW);
+                this->timerIsRunning = false;
+            }
+        }
+
+        delay(1000);
+    }
 }
