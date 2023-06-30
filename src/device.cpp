@@ -36,6 +36,10 @@ void Device::setTimer(int startHour, int startMinute, int endHour, int endMinute
 
     this->secondsOnAfterStart = (timeDiff * 3600) + (minutesDiff * 60);
 
+    if(taskIsCreated) {
+        vTaskDelete(this->TimerTaskHandle);
+    }
+
     xTaskCreate(
         startTimerTask,
         "timerTask",
@@ -44,6 +48,8 @@ void Device::setTimer(int startHour, int startMinute, int endHour, int endMinute
         1,
         &this->TimerTaskHandle
     );
+
+    this->taskIsCreated = true;
 }
 
 void Device::startTimerTask(void *parameter) {
@@ -86,4 +92,5 @@ void Device::timerTask() {
 
 void Device::deleteTimer() {
     vTaskDelete(this->TimerTaskHandle);
+    this->taskIsCreated = false;
 }
