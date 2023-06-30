@@ -43,12 +43,9 @@ void setup() {
         delay(200);
     }
 
-    server.on("/timer", HTTP_POST, setTimer);
     server.on("/timer", HTTP_GET, getTimer);
+    server.on("/timer", HTTP_POST, setTimer);
     server.on("/timer", HTTP_OPTIONS, sendCORSHeader);
-
-    server.on("/status", HTTP_POST, setTimerStatus);
-    server.on("/status", HTTP_OPTIONS, sendCORSHeader);
 
     server.on("/device", HTTP_GET, getRelayStatus);
     server.on("/device", HTTP_POST, controlDevice);
@@ -72,10 +69,17 @@ void setTimer() {
     String sM = server.arg("sm");
     String eH = server.arg("eh");
     String eM = server.arg("em");
+    String status = server.arg("status");
 
     if(sH && sM && eH && eM) {
         device01.setTimer(sH.toInt(), sM.toInt(), eH.toInt(), eM.toInt());
         server.send(201);
+    } else if(status) {
+        if(status == "off") {
+            device01.deleteTimer();
+        }
+
+        server.send(200);
     } else {
         server.send(400);
     }
@@ -102,21 +106,6 @@ void getTimer() {
     String response = "{" + startKV + endKV + statusKV + "}"; 
 
     server.send(200, "application/json", response);
-}
-
-void setTimerStatus() {
-    server.sendHeader(F("Access-Control-Allow-Origin"), F("*"));
-    String status = server.arg("status");
-
-    if(status) {
-        if(status == "off") {
-            device01.deleteTimer();
-        }
-
-        server.send(200);
-    } else {
-        server.send(400);
-    }
 }
 
 void controlDevice() {
