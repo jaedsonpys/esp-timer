@@ -70,17 +70,14 @@ void setTimer() {
     String eM = server.arg("em");
     String status = server.arg("status");
 
-    if(sH && sM && eH && eM) {
+    if(status == "off") {
+        device01.deleteTimer();
+        server.send(200, F('text/pain'), F("timer deleted"));
+    } else if(sH != "" && sM != "" && eH != "" && eM != "") {
         device01.setTimer(sH.toInt(), sM.toInt(), eH.toInt(), eM.toInt());
-        server.send(201);
-    } else if(status) {
-        if(status == "off") {
-            device01.deleteTimer();
-        }
-
-        server.send(200);
+        server.send(201, F('text/pain'), F("timer created"));
     } else {
-        server.send(400);
+        server.send(400, F('text/pain'), F("invalid data"));
     }
 }
 
