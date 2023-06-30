@@ -97,11 +97,11 @@ void getTimer() {
 
     String start = device01.getTimerStart();
     String end = device01.getTimerEnd();
-    String status = device01.timerIsActive() ? "on" : "off";
+    String status = device01.timerIsActive() ? "true" : "false";
 
     String startKV = "\"start\": \"" + start + "\",";
     String endKV = "\"end\": \"" + end + "\",";
-    String statusKV = "\"timerActive\": \"" + status + "\"";
+    String statusKV = "\"timerActive\": " + status;
     String response = "{" + startKV + endKV + statusKV + "}"; 
 
     server.send(200, "application/json", response);
