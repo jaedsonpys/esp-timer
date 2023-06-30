@@ -29,6 +29,7 @@ void controlDevice();
 void getDeviceStatus();
 
 void setup() {
+    Serial.begin(9600);
     pinMode(2, OUTPUT);
 
     WiFi.mode(WIFI_STA);
@@ -72,12 +73,12 @@ void setTimer() {
 
     if(status == "off") {
         device01.deleteTimer();
-        server.send(200, F('text/pain'), F("timer deleted"));
+        server.send(200, F("text/pain"), F("timer deleted"));
     } else if(sH != "" && sM != "" && eH != "" && eM != "") {
         device01.setTimer(sH.toInt(), sM.toInt(), eH.toInt(), eM.toInt());
-        server.send(201, F('text/pain'), F("timer created"));
+        server.send(201, F("text/pain"), F("timer created"));
     } else {
-        server.send(400, F('text/pain'), F("invalid data"));
+        server.send(400, F("text/pain"), F("invalid data"));
     }
 }
 
