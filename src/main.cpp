@@ -46,7 +46,7 @@ void setup() {
     server.on("/timer", HTTP_POST, setTimer);
     server.on("/timer", HTTP_OPTIONS, sendCORSHeader);
 
-    server.on("/device", HTTP_GET, getRelayStatus);
+    server.on("/device", HTTP_GET, getDeviceStatus);
     server.on("/device", HTTP_POST, controlDevice);
     server.on("/device", HTTP_OPTIONS, sendCORSHeader);
 
@@ -124,7 +124,7 @@ void controlDevice() {
     }
 }
 
-void getRelayStatus() {
+void getDeviceStatus() {
     server.sendHeader(F("Access-Control-Allow-Origin"), F("*"));
     String status = device01.isON() ? "on" : "off";
     String response = "{\"status\":\"" + status + "\"}";
