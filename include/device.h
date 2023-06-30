@@ -13,7 +13,7 @@ class Device {
         String deviceName;
 
     public:
-        void begin(String deviceName, int devicePin);
+        Device(String deviceName, int devicePin);
 
         void setTimer(int startHour, int startMinute, int endHour, int endMinute);
         void deleteTimer();
