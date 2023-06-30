@@ -21,6 +21,8 @@ class Device {
         void timerTask();
         void deleteTimer();
 
+        bool timerIsActive();
+
         void powerOn();
         void powerOff();
         bool isON();

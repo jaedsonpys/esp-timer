@@ -97,6 +97,10 @@ void Device::deleteTimer() {
     }
 }
 
+bool Device::timerIsActive() {
+    return this->timerIsCreated;
+}
+
 void Device::powerOn() {
     digitalWrite(this->devicePin, HIGH);
 
