@@ -20,7 +20,6 @@ IPAddress dns1(8, 8, 8, 8);
 IPAddress dns2(8, 8, 4, 4);
 
 WebServer server(80);
-TaskHandle_t TimerTaskHandle;
 
 Device device01("LampadaSala", 15);
 
@@ -31,7 +30,6 @@ void controlDevice();
 void getDeviceStatus();
 
 void setup() {
-    Serial.begin(9600);
     pinMode(2, OUTPUT);
 
     WiFi.mode(WIFI_STA);
@@ -45,17 +43,16 @@ void setup() {
         delay(200);
     }
 
+    configTime(gmtOffsetSec, daylightOffSetSec, mainNTPServer, recoveryNTPServer);
+
     server.on("/timer", HTTP_GET, getTimer);
     server.on("/timer", HTTP_POST, setTimer);
     server.on("/timer", HTTP_OPTIONS, sendCORSHeader);
-
     server.on("/device", HTTP_GET, getDeviceStatus);
     server.on("/device", HTTP_POST, controlDevice);
     server.on("/device", HTTP_OPTIONS, sendCORSHeader);
 
     server.begin();
- 
-    configTime(gmtOffsetSec, daylightOffSetSec, mainNTPServer, recoveryNTPServer);
 }
 
 void loop() {
