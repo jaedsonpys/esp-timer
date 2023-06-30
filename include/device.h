@@ -11,6 +11,7 @@ class Device {
         int timerStartHour, timerStartMinute, timerEndHour, timerEndMinute;
 
         String deviceName;
+        TaskHandle_t TimerTaskHandle;
 
     public:
         Device(String deviceName, int devicePin);
