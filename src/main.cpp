@@ -1,13 +1,17 @@
 #include <Arduino.h>
 #include <WiFi.h>
 #include <WebServer.h>
-#include <NTPClient.h>
-#include <WiFiUdp.h>
 
 #include "device.h"
 
 const char* ssid = "JARMESON_JNETCOM";
 const char* password = "wet20110";
+
+// NTP config
+const char* mainNTPServer = "pool.ntp.org";
+const char* recoveryNTPServer = "time.google.com";
+const int daylightOffSetSec = -10800;
+const long gmtOffsetSec = 0;
 
 IPAddress ip(192, 168, 0, 150);
 IPAddress gateway(192, 168, 0, 1);
@@ -15,8 +19,6 @@ IPAddress subnet(255, 255, 255, 0);
 IPAddress dns1(8, 8, 8, 8);
 IPAddress dns2(8, 8, 4, 4);
 
-WiFiUDP wUDP;
-NTPClient ntpC(wUDP);
 WebServer server(80);
 TaskHandle_t TimerTaskHandle;
 
@@ -53,9 +55,7 @@ void setup() {
 
     server.begin();
  
-    // UTC -3 (-10800): Brasília
-    ntpC.begin();
-    ntpC.setTimeOffset(-10800);
+    configTime(gmtOffsetSec, daylightOffSetSec, mainNTPServer, recoveryNTPServer);
 }
 
 void loop() {

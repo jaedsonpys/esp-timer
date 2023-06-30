@@ -1,10 +1,5 @@
 #include <Arduino.h>
-#include <NTPClient.h>
-#include <WiFiUdp.h>
 #include "device.h"
-
-WiFiUDP wifiUDP;
-NTPClient ntp(wifiUDP);
 
 Device::Device(String deviceName, int devicePin) {
     this->deviceName = deviceName;
@@ -58,26 +53,39 @@ void Device::startTimerTask(void *parameter) {
 }
 
 void Device::timerTask() {
-    int hours, minutes, seconds;
+    char cDay[3], cHours[3], cMinutes[3], cSeconds[3];
+    int day, hours, minutes, seconds;
     unsigned long cEpoch, waitAtEpoch;
+    struct tm timeInfo;
+    time_t currentEpoch;
 
     for(;;) {
-        ntp.forceUpdate();
-        hours = ntp.getHours();
-        minutes = ntp.getMinutes();
-        seconds = ntp.getSeconds();
+        getLocalTime(&timeInfo);
 
-        if(ntp.getDay() != this->lastDayTimer) {
+        strftime(cDay, 3, "%d", &timeInfo);
+        strftime(cHours, 3, "%H", &timeInfo);
+        strftime(cMinutes, 3, "%M", &timeInfo);
+        strftime(cSeconds, 3, "%S", &timeInfo);
+
+        day = String(cDay).toInt();
+        hours = String(cHours).toInt();
+        minutes = String(cMinutes).toInt();
+        seconds = String(cSeconds).toInt();
+
+        if(day != this->lastDayTimer) {
             if(hours >= this->timerStartHour && minutes >= this->timerStartMinute) {
+                time(&currentEpoch);
                 this->timerIsRunning = true;
 
-                cEpoch = ntp.getEpochTime() - seconds;
+                cEpoch = currentEpoch - seconds;
                 waitAtEpoch = cEpoch + this->secondsOnAfterStart;
-                this->lastDayTimer = ntp.getDay();
+                this->lastDayTimer = day;
 
                 digitalWrite(this->devicePin, HIGH);
 
-                while(ntp.getEpochTime() < waitAtEpoch) {
+                while(currentEpoch < waitAtEpoch) {
+                    getLocalTime(&timeInfo);
+                    time(&currentEpoch);
                     delay(1000);
                 }
 
