@@ -115,6 +115,10 @@ void Device::powerOff() {
     }
 }
 
+bool Device::isON() {
+    return digitalRead(this->devicePin);
+}
+
 String Device::getTimerStart() {
     return String(timerStartHour) + ":" + String(timerStartMinute);
 }

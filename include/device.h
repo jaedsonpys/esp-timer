@@ -23,6 +23,7 @@ class Device {
 
         void powerOn();
         void powerOff();
+        bool isON();
 
         String getTimerStart();
         String getTimerEnd();
