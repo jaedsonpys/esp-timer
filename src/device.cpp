@@ -91,6 +91,8 @@ void Device::timerTask() {
 }
 
 void Device::deleteTimer() {
-    vTaskDelete(this->TimerTaskHandle);
-    this->taskIsCreated = false;
+    if(taskIsCreated) {
+        vTaskDelete(this->TimerTaskHandle);
+        this->taskIsCreated = false;
+    }
 }
