@@ -16,7 +16,7 @@ class Device {
         Device(String deviceName, int devicePin);
 
         void setTimer(int startHour, int startMinute, int endHour, int endMinute);
-        void timerTask();
+        static void timerTask(void *parameter);
         void deleteTimer();
 
         void powerOn();
