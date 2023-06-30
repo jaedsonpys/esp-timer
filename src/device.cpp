@@ -1,5 +1,10 @@
 #include <Arduino.h>
+#include <NTPClient.h>
+#include <WiFiUdp.h>
 #include "device.h"
+
+WiFiUDP wifiUDP;
+NTPClient ntp(wifiUDP);
 
 Device::Device(String deviceName, int devicePin) {
     this->deviceName = deviceName;
@@ -32,11 +37,16 @@ void Device::setTimer(int startHour, int startMinute, int endHour, int endMinute
     this->secondsOnAfterStart = (timeDiff * 3600) + (minutesDiff * 60);
 
     xTaskCreate(
-        timerTask,
+        startTimerTask,
         "timerTask",
         4000,
-        NULL,
+        this,
         1,
         &this->TimerTaskHandle
     );
+}
+
+void startTimerTask(void *parameter) {
+    Device *deviceObject = (Device *)parameter;
+    deviceObject->timerTask();
 }
