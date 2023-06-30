@@ -56,10 +56,11 @@ void setup() {
     server.on("/device", HTTP_POST, controlDevice);
     server.on("/device", HTTP_OPTIONS, sendCORSHeader);
 
+    server.begin();
+ 
     // UTC -3 (-10800): Brasília
     ntpC.begin();
     ntpC.setTimeOffset(-10800);
-    server.begin();
 }
 
 void loop() {
