@@ -105,3 +105,12 @@ void Device::powerOn() {
         this->deleteTimer();
     }
 }
+
+void Device::powerOff() {
+    digitalWrite(this->devicePin, LOW);
+
+    if(taskIsCreated) {    
+        // if control device while a timer exists, timer is canceled
+        this->deleteTimer();
+    }
+}
