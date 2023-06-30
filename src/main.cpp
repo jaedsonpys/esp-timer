@@ -26,7 +26,6 @@ void setTimer();
 void sendCORSHeader();
 void getTimer();
 void setTimerStatus();
-void getTimerStatus();
 void controlDevice();
 void getDeviceStatus();
 
@@ -48,7 +47,6 @@ void setup() {
     server.on("/timer", HTTP_GET, getTimer);
     server.on("/timer", HTTP_OPTIONS, sendCORSHeader);
 
-    server.on("/status", HTTP_GET, getTimerStatus);
     server.on("/status", HTTP_POST, setTimerStatus);
     server.on("/status", HTTP_OPTIONS, sendCORSHeader);
 
@@ -96,7 +94,12 @@ void getTimer() {
 
     String start = device01.getTimerStart();
     String end = device01.getTimerEnd();
-    String response = "{\"start\":\"" + start + "\",\"end\":\"" + end + "\"}"; 
+    String status = device01.timerIsActive() ? "on" : "off";
+
+    String startKV = "\"start\": \"" + start + "\",";
+    String endKV = "\"end\": \"" + end + "\",";
+    String statusKV = "\"timerActive\": \"" + status + "\"";
+    String response = "{" + startKV + endKV + statusKV + "}"; 
 
     server.send(200, "application/json", response);
 }
@@ -114,13 +117,6 @@ void setTimerStatus() {
     } else {
         server.send(400);
     }
-}
-
-void getTimerStatus() {
-    server.sendHeader(F("Access-Control-Allow-Origin"), F("*"));
-    String status = device01.timerIsActive() ? "on" : "off";
-    String response = "{\"status\":\"" + status + "\"}";
-    server.send(200, "application/json", response);
 }
 
 void controlDevice() {
