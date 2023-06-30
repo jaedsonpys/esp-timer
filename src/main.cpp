@@ -25,7 +25,6 @@ Device device01("LampadaSala", 15);
 void setTimer();
 void sendCORSHeader();
 void getTimer();
-void setTimerStatus();
 void controlDevice();
 void getDeviceStatus();
 
