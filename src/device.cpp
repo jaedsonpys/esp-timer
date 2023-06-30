@@ -36,7 +36,7 @@ void Device::setTimer(int startHour, int startMinute, int endHour, int endMinute
 
     this->secondsOnAfterStart = (timeDiff * 3600) + (minutesDiff * 60);
 
-    if(taskIsCreated) {
+    if(timerIsCreated) {
         vTaskDelete(this->TimerTaskHandle);
     }
 
@@ -49,7 +49,7 @@ void Device::setTimer(int startHour, int startMinute, int endHour, int endMinute
         &this->TimerTaskHandle
     );
 
-    this->taskIsCreated = true;
+    this->timerIsCreated = true;
 }
 
 void Device::startTimerTask(void *parameter) {
@@ -91,16 +91,16 @@ void Device::timerTask() {
 }
 
 void Device::deleteTimer() {
-    if(taskIsCreated) {
+    if(this->timerIsCreated) {
         vTaskDelete(this->TimerTaskHandle);
-        this->taskIsCreated = false;
+        this->timerIsCreated = false;
     }
 }
 
 void Device::powerOn() {
     digitalWrite(this->devicePin, HIGH);
 
-    if(taskIsCreated) {    
+    if(this->timerIsCreated) {    
         // if control device while a timer exists, timer is canceled
         this->deleteTimer();
     }
@@ -109,7 +109,7 @@ void Device::powerOn() {
 void Device::powerOff() {
     digitalWrite(this->devicePin, LOW);
 
-    if(taskIsCreated) {    
+    if(this->timerIsCreated) {    
         // if control device while a timer exists, timer is canceled
         this->deleteTimer();
     }

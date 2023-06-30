@@ -6,7 +6,7 @@
 
 class Device {
     private:
-        bool timerEnabled, timerIsRunning, taskIsCreated = false;
+        bool timerIsRunning, timerIsCreated = false;
         int secondsOnAfterStart, lastDayTimer, devicePin;
         int timerStartHour, timerStartMinute, timerEndHour, timerEndMinute;
 
