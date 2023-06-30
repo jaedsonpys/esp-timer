@@ -83,3 +83,7 @@ void Device::timerTask() {
         delay(1000);
     }
 }
+
+void Device::deleteTimer() {
+    vTaskDelete(this->TimerTaskHandle);
+}
