@@ -114,3 +114,11 @@ void Device::powerOff() {
         this->deleteTimer();
     }
 }
+
+String Device::getTimerStart() {
+    return String(timerStartHour) + ":" + String(timerStartMinute);
+}
+
+String Device::getTimerEnd() {
+    return String(timerEndHour) + ":" + String(timerEndMinute);
+}
