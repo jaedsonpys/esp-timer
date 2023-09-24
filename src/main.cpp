@@ -50,29 +50,32 @@ void loop() {
     WiFiClient client = server.available();
 
     if(client) {
-        if(client.available()) {
-            String command = client.readString();
-            command.trim();
+        while(client.connected()) {
+            if(client.available()) {
+                String command = client.readString();
+                command.trim();
 
-            if(command.equals("control")) {
-                String device = client.readString();
-                String status = client.readString();
-                
-                device.trim();
-                status.trim();
+                if(command.equals("control")) {
+                    String device = client.readString();
+                    String status = client.readString();
+                    
+                    device.trim();
+                    status.trim();
 
-                if(device.equals("LampadaSala")) {
-                    if(status.equals("on")) {
-                        device01.powerOn();
-                    } else {
-                        device01.powerOff();
+                    if(device.equals("LampadaSala")) {
+                        if(status.equals("on")) {
+                            device01.powerOn();
+                        } else {
+                            device01.powerOff();
+                        }
                     }
-                }
 
-                client.println("OK");
-            } else if(command.equals("ping")) {
-                client.println("pong");
+                    client.println("OK");
+                } else if(command.equals("ping")) {
+                    client.println("pong");
+                }
             }
         }
+
     }
 }
