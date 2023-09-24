@@ -18,6 +18,8 @@ IPAddress subnet(255, 255, 255, 0);
 IPAddress dns1(8, 8, 8, 8);
 IPAddress dns2(8, 8, 4, 4);
 
+WiFiServer server(80);
+
 Device device01("LampadaSala", 15);
 
 void setTimer();
@@ -41,8 +43,36 @@ void setup() {
     }
 
     configTime(gmtOffsetSec, daylightOffSetSec, mainNTPServer, recoveryNTPServer);
+    server.begin();
 }
 
 void loop() {
+    WiFiClient client = server.available();
 
+    if(client) {
+        if(client.available()) {
+            String command = client.readString();
+            command.trim();
+
+            if(command.equals("control")) {
+                String device = client.readString();
+                String status = client.readString();
+                
+                device.trim();
+                status.trim();
+
+                if(device.equals("LampadaSala")) {
+                    if(status.equals("on")) {
+                        device01.powerOn();
+                    } else {
+                        device01.powerOff();
+                    }
+                }
+
+                client.println("OK");
+            } else if(command.equals("ping")) {
+                client.println("pong");
+            }
+        }
+    }
 }
