@@ -20,13 +20,7 @@ IPAddress dns2(8, 8, 4, 4);
 
 WiFiServer server(80);
 
-Device device01("LampadaSala", 15);
-
-void setTimer();
-void sendCORSHeader();
-void getTimer();
-void controlDevice();
-void getDeviceStatus();
+Device device01("LampadaSala", 14);
 
 void setup() {
     pinMode(2, OUTPUT);
@@ -55,22 +49,20 @@ void loop() {
                 String command = client.readString();
                 command.trim();
 
-                if(command.equals("control")) {
-                    String device = client.readString();
-                    String status = client.readString();
-                    
-                    device.trim();
-                    status.trim();
+                if(command.startsWith("control")) {
+                    command.replace("control:", "");
+                    int sepIndex = command.indexOf(':');
 
-                    if(device.equals("LampadaSala")) {
-                        if(status.equals("on")) {
+                    String device = command.substring(0, sepIndex);
+                    String status = command.substring(sepIndex + 1, command.length());
+
+                    if(device == "LampadaSala") {
+                        if(status == "on") {
                             device01.powerOn();
                         } else {
                             device01.powerOff();
                         }
                     }
-
-                    client.println("OK");
                 } else if(command.equals("ping")) {
                     client.println("pong");
                 }
