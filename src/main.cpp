@@ -20,7 +20,7 @@ IPAddress dns2(8, 8, 4, 4);
 
 WiFiServer server(80);
 
-Device device01("LampadaSala", 14);
+Device device01("LampadaSala", 27);
 
 void setup() {
     pinMode(2, OUTPUT);
@@ -42,19 +42,22 @@ void setup() {
 
 void loop() {
     WiFiClient client = server.available();
+    String command, device, status;
+
+    int sepIndex;
 
     if(client) {
         while(client.connected()) {
             if(client.available()) {
-                String command = client.readString();
+                command = client.readString();
                 command.trim();
 
                 if(command.startsWith("control")) {
                     command.replace("control:", "");
-                    int sepIndex = command.indexOf(':');
+                    sepIndex = command.indexOf(':');
 
-                    String device = command.substring(0, sepIndex);
-                    String status = command.substring(sepIndex + 1, command.length());
+                    device = command.substring(0, sepIndex);
+                    status = command.substring(sepIndex + 1, command.length());
 
                     if(device == "LampadaSala") {
                         if(status == "on") {
@@ -68,6 +71,7 @@ void loop() {
                 }
             }
         }
-
     }
+
+    delay(100);
 }
