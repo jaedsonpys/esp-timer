@@ -43,6 +43,9 @@ void setup() {
 void loop() {
     WiFiClient client = server.available();
     String command, device, status;
+    String timer, startTimer, endTimer;
+    String startHour, startMinute;
+    String endHour, endMinute;
 
     int sepIndex;
 
@@ -65,6 +68,29 @@ void loop() {
                         } else {
                             device01.powerOff();
                         }
+                    }
+                } else if(command.startsWith("timer")) {
+                    command.replace("timer:", "");
+                    sepIndex = command.indexOf(':');
+
+                    device = command.substring(0, sepIndex);
+                    timer = command.substring(sepIndex + 1, command.length());
+
+                    startTimer = timer.substring(0, timer.indexOf('/'));
+                    endTimer = timer.substring(timer.indexOf('/') + 1, timer.length());
+
+                    startHour = startTimer.substring(0, startTimer.indexOf('.'));
+                    startMinute = startTimer.substring(startTimer.indexOf('.') + 1, startTimer.length());
+                    endHour = endTimer.substring(0, endTimer.indexOf('.'));
+                    endMinute = endTimer.substring(endTimer.indexOf('.') + 1, endTimer.length());
+
+                    if(device == "LampadaSala") {
+                        device01.setTimer(
+                            startTimer.toInt(),
+                            startMinute.toInt(),
+                            endHour.toInt(),
+                            endMinute.toInt()
+                        );
                     }
                 } else if(command.equals("ping")) {
                     client.println("pong");
