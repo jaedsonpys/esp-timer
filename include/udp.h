@@ -6,7 +6,7 @@
 
 class UDP {
     public:
-        UDP(WiFiUDP _udp, int port);
+        UDP(int port);
 
         void sendto(String host, int port, String data);
         String listen();
