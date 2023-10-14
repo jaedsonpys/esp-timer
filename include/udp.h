@@ -4,9 +4,9 @@
 
 #include <Arduino.h>
 
-class UDP {
+class SocketUDP {
     public:
-        UDP(int port);
+        SocketUDP(int port);
 
         void sendto(char* host, int port, String data);
         String listen();
