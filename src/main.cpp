@@ -2,6 +2,7 @@
 #include <WiFi.h>
 
 #include "device.h"
+#include "udp.h"
 
 const char* ssid = "JARMESON_JNETCOM";
 const char* password = "wet20110";
@@ -18,8 +19,7 @@ IPAddress subnet(255, 255, 255, 0);
 IPAddress dns1(8, 8, 8, 8);
 IPAddress dns2(8, 8, 4, 4);
 
-WiFiServer server(80);
-
+SocketUDP socket(2808);
 Device device01("LampadaSala", 27);
 
 void setup() {
@@ -37,11 +37,9 @@ void setup() {
     }
 
     configTime(gmtOffsetSec, daylightOffSetSec, mainNTPServer, recoveryNTPServer);
-    server.begin();
 }
 
 void loop() {
-    WiFiClient client = server.available();
     String command, device, status;
     String timer, startTimer, endTimer;
     String startHour, startMinute;
@@ -49,53 +47,44 @@ void loop() {
 
     int sepIndex;
 
-    if(client) {
-        while(client.connected()) {
-            if(client.available()) {
-                command = client.readString();
-                command.trim();
+    command = socket.listen();
 
-                if(command.startsWith("control")) {
-                    command.replace("control:", "");
-                    sepIndex = command.indexOf(':');
+    if(command.startsWith("control")) {
+        command.replace("control:", "");
+        sepIndex = command.indexOf(':');
 
-                    device = command.substring(0, sepIndex);
-                    status = command.substring(sepIndex + 1, command.length());
+        device = command.substring(0, sepIndex);
+        status = command.substring(sepIndex + 1, command.length());
 
-                    if(device == "LampadaSala") {
-                        if(status == "on") {
-                            device01.powerOn();
-                        } else {
-                            device01.powerOff();
-                        }
-                    }
-                } else if(command.startsWith("timer")) {
-                    command.replace("timer:", "");
-                    sepIndex = command.indexOf(':');
-
-                    device = command.substring(0, sepIndex);
-                    timer = command.substring(sepIndex + 1, command.length());
-
-                    startTimer = timer.substring(0, timer.indexOf('/'));
-                    endTimer = timer.substring(timer.indexOf('/') + 1, timer.length());
-
-                    startHour = startTimer.substring(0, startTimer.indexOf('.'));
-                    startMinute = startTimer.substring(startTimer.indexOf('.') + 1, startTimer.length());
-                    endHour = endTimer.substring(0, endTimer.indexOf('.'));
-                    endMinute = endTimer.substring(endTimer.indexOf('.') + 1, endTimer.length());
-
-                    if(device == "LampadaSala") {
-                        device01.setTimer(
-                            startTimer.toInt(),
-                            startMinute.toInt(),
-                            endHour.toInt(),
-                            endMinute.toInt()
-                        );
-                    }
-                } else if(command.equals("ping")) {
-                    client.println("pong");
-                }
+        if(device == "LampadaSala") {
+            if(status == "on") {
+                device01.powerOn();
+            } else {
+                device01.powerOff();
             }
+        }
+    } else if(command.startsWith("timer")) {
+        command.replace("timer:", "");
+        sepIndex = command.indexOf(':');
+
+        device = command.substring(0, sepIndex);
+        timer = command.substring(sepIndex + 1, command.length());
+
+        startTimer = timer.substring(0, timer.indexOf('/'));
+        endTimer = timer.substring(timer.indexOf('/') + 1, timer.length());
+
+        startHour = startTimer.substring(0, startTimer.indexOf('.'));
+        startMinute = startTimer.substring(startTimer.indexOf('.') + 1, startTimer.length());
+        endHour = endTimer.substring(0, endTimer.indexOf('.'));
+        endMinute = endTimer.substring(endTimer.indexOf('.') + 1, endTimer.length());
+
+        if(device == "LampadaSala") {
+            device01.setTimer(
+                startTimer.toInt(),
+                startMinute.toInt(),
+                endHour.toInt(),
+                endMinute.toInt()
+            );
         }
     }
 
