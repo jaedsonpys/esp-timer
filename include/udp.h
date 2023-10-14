@@ -2,12 +2,12 @@
 #define UDP_h
 #endif
 
-#include <WiFiUdp.h>
+#include <Arduino.h>
 
 class UDP {
     public:
         UDP(int port);
 
-        void sendto(String host, int port, String data);
+        void sendto(char* host, int port, String data);
         String listen();
 };
