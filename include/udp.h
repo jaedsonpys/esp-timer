@@ -6,8 +6,7 @@
 
 class SocketUDP {
     public:
-        SocketUDP(int port);
-
+        void begin(int port);
         void sendto(char* host, int port, String data);
         String listen();
 };

@@ -4,7 +4,7 @@
 
 WiFiUDP udp;
 
-SocketUDP::SocketUDP(int port) {
+void SocketUDP::begin(int port) {
     udp.begin(port);
 };
 

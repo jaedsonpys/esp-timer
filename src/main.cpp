@@ -19,7 +19,7 @@ IPAddress subnet(255, 255, 255, 0);
 IPAddress dns1(8, 8, 8, 8);
 IPAddress dns2(8, 8, 4, 4);
 
-SocketUDP socket(2808);
+SocketUDP socket;
 Device device01("LampadaSala", 27);
 
 void setup() {
@@ -37,6 +37,7 @@ void setup() {
     }
 
     configTime(gmtOffsetSec, daylightOffSetSec, mainNTPServer, recoveryNTPServer);
+    socket.begin(2808);
 }
 
 void loop() {
